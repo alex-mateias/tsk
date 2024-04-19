@@ -22,5 +22,9 @@ public class AutofacModule : Module
 
         builder.RegisterType<UserService>().As<IUserService>();
         builder.RegisterType<UserRepository>().As<IUserRepository>();
+
+        builder.RegisterType<ApplicationDbContext>()
+               .AsSelf()
+               .WithParameter("connectionString", connectionString);
     }
 }
