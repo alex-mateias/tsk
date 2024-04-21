@@ -4,29 +4,36 @@ namespace tsk.Service
 {
     public class Service<T> : IService<T> where T : class
     {
-        public Task<T> AddAsync(T entity)
+        private readonly IRepository<T> _repository;
+
+        public Service(IRepository<T> repository)
         {
-            throw new NotImplementedException();
+            _repository = repository;
         }
 
-        public Task DeleteAsync(Guid id)
+        public async Task<T> GetAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await _repository.GetAsync(id);
         }
 
-        public Task<IEnumerable<T>> GetAllAsync()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _repository.GetAllAsync();
         }
 
-        public Task<T> GetAsync(Guid id)
+        public async Task<T> AddAsync(T entity)
         {
-            throw new NotImplementedException();
+            return await _repository.AddAsync(entity);
         }
 
-        public Task UpdateAsync(T entity)
+        public async Task UpdateAsync(T entity)
         {
-            throw new NotImplementedException();
+            await _repository.UpdateAsync(entity);
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            await _repository.DeleteAsync(id);
         }
     }
 }

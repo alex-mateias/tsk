@@ -1,6 +1,6 @@
 ﻿namespace tsk.Domain.Interfaces
 {
-    public interface IService<T> where T : class
+    public interface IService<T>
     {
         Task<T> GetAsync(Guid id);
         Task<IEnumerable<T>> GetAllAsync();

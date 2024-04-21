@@ -1,45 +1,48 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using tsk.DataAccess;
 using tsk.Domain.Interfaces;
 
 public class Repository<T> : IRepository<T> where T : class
 {
-    private readonly DbContext _context;
+    private readonly ApplicationDbContext _context;
+    private readonly DbSet<T> _dbSet;
 
-    public Repository(DbContext context)
+    public Repository(ApplicationDbContext context)
     {
         _context = context;
+        _dbSet = _context.Set<T>();
     }
 
     public async Task<T> AddAsync(T entity)
     {
-        await _context.Set<T>().AddAsync(entity);
+        await _dbSet.AddAsync(entity);
         await _context.SaveChangesAsync();
         return entity;
     }
 
     public async Task DeleteAsync(Guid id)
     {
-        var entity = await _context.Set<T>().FindAsync(id);
-        if (entity == null)
-            throw new ArgumentException("Entity not found");
-
-        _context.Set<T>().Remove(entity);
-        await _context.SaveChangesAsync();
+        var entity = await _dbSet.FindAsync(id);
+        if (entity != null)
+        {
+            _dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
+        }
     }
 
     public async Task<IEnumerable<T>> GetAllAsync()
     {
-        return await _context.Set<T>().ToListAsync();
+        return await _dbSet.ToListAsync();
     }
 
     public async Task<T> GetAsync(Guid id)
     {
-        return await _context.Set<T>().FindAsync(id) ?? throw new ArgumentException("Enriry not found");
+        return await _dbSet.FindAsync(id);
     }
 
     public async Task UpdateAsync(T entity)
     {
-        _context.Entry(entity).State = EntityState.Modified;
+        _dbSet.Update(entity);
         await _context.SaveChangesAsync();
     }
 }
